@@ -1,7 +1,7 @@
 import { FastifyReply, FastifyRequest } from 'fastify'
 import { z } from 'zod'
-import { prisma } from '../../lib/prisma'
-import { generateSlug } from '../../utils/generate-slug'
+import { CreateEventUseCase } from '../../use-cases/create-event'
+import { PrismaEventRepository } from '../../repositories/prisma/prisma-event-repository'
 
 export async function createEvent(
     request: FastifyRequest,
@@ -17,25 +17,13 @@ export async function createEvent(
         request.body,
     )
 
-    const slug = generateSlug(title)
+    const prismaEventRepository = new PrismaEventRepository()
+    const createEventUseCae = new CreateEventUseCase(prismaEventRepository)
 
-    const verifySlugExists = await prisma.event.findUnique({
-        where: {
-            slug,
-        },
-    })
-
-    if (verifySlugExists) {
-        return reply.status(409).send({ message: 'Event already exists' })
-    }
-
-    const event = await prisma.event.create({
-        data: {
-            title,
-            details,
-            slug,
-            maximumAttendees,
-        },
+    const event = await createEventUseCae.execute({
+        title,
+        details,
+        maximumAttendees,
     })
 
     return reply.status(201).send({
