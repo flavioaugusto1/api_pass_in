@@ -1,5 +1,7 @@
 import fastify from 'fastify'
 
+import { appRoutes } from './http/app.routes'
+
 export const app = fastify()
 
-app.get('/hello', async () => {})
+app.register(appRoutes)
