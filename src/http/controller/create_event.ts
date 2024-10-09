@@ -1,6 +1,6 @@
 import { FastifyReply, FastifyRequest } from 'fastify'
 import { z } from 'zod'
-import { CreateEventUseCase } from '../../use-cases/create-event'
+import { CreateEventUseCase } from '../../use-cases/create-event-usecase'
 import { PrismaEventRepository } from '../../repositories/prisma/prisma-event-repository'
 
 export async function createEvent(

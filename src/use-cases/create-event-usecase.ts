@@ -1,5 +1,4 @@
 import { generateSlug } from '../utils/generate-slug'
-import { prisma } from '../lib/prisma'
 import { EventRepository } from '../repositories/event-repository'
 
 interface RequestCreateEventInterface {
