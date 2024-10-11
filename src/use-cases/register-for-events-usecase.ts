@@ -21,18 +21,33 @@ export class RegisterAttendeeForEventUseCase {
             throw new Error('O evento que está tentando cadastrar não existe.')
         }
 
-        const attendee = await this.registerAttendeeRepository.find(email)
+        const [attendee, amountOfAttendeesForEvent] = await Promise.all([
+            this.registerAttendeeRepository.find(email, eventId),
 
-        if (event.id === attendee?.event_id) {
+            await this.registerAttendeeRepository.countRegisteredAttendeesOnEvent(
+                eventId,
+            ),
+        ])
+
+        if (attendee) {
             throw new Error('O participante já está nesse evento')
         }
 
-        await this.registerAttendeeRepository.create({
+        if (
+            event.maximumAttendees &&
+            amountOfAttendeesForEvent >= event.maximumAttendees
+        ) {
+            throw new Error('O evento atingiu o máximo de participantes.')
+        }
+
+        const attendeeCreated = await this.registerAttendeeRepository.create({
             name,
             email,
             event: {
                 connect: event,
             },
         })
+
+        return attendeeCreated
     }
 }

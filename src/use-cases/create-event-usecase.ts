@@ -17,7 +17,7 @@ export class CreateEventUseCase {
     }: RequestCreateEventInterface) {
         const slug = generateSlug(title)
 
-        const verifySlugExists = await this.eventRepository.find(slug)
+        const verifySlugExists = await this.eventRepository.findBySlug(slug)
 
         if (verifySlugExists) {
             throw new Error('Event already exists')

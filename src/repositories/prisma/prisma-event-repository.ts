@@ -1,10 +1,22 @@
 import { Event, Prisma } from '@prisma/client'
 import { prisma } from '../../lib/prisma'
-import { EventRepository } from '../event-repository'
+import { EventInterface, EventRepository } from '../event-repository'
 
 export class PrismaEventRepository implements EventRepository {
-    async findById(eventId: string): Promise<Event | null> {
+    async findById(eventId: string): Promise<EventInterface | null> {
         const event = await prisma.event.findUnique({
+            select: {
+                id: true,
+                title: true,
+                details: true,
+                slug: true,
+                maximumAttendees: true,
+                _count: {
+                    select: {
+                        attendees: true,
+                    },
+                },
+            },
             where: {
                 id: eventId,
             },
@@ -13,7 +25,7 @@ export class PrismaEventRepository implements EventRepository {
         return event
     }
 
-    async find(slug: string): Promise<Event | null> {
+    async findBySlug(slug: string): Promise<Event | null> {
         const eventBySlug = await prisma.event.findUnique({
             where: {
                 slug,

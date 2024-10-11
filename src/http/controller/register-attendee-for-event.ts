@@ -29,7 +29,9 @@ export async function registerAttendeeForEvent(
         prismaEventRepository,
     )
 
-    await registerForEvent.execute({ name, email, eventId })
+    const attendee = await registerForEvent.execute({ name, email, eventId })
 
-    return
+    return reply.status(201).send({
+        attendee: attendee?.id,
+    })
 }
