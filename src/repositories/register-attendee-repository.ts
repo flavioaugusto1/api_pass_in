@@ -3,6 +3,9 @@ import { Attendee, Prisma } from '@prisma/client'
 export interface AttendeeIterface {
     name: string
     email: string
+    event: {
+        title: string
+    }
 }
 
 export interface RegisterAttendeeRepository {

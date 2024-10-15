@@ -28,12 +28,23 @@ model Attendee {
     id                  String   @id @default(uuid())
     name                String
     email               String   @unique
-    numberParticipation Int      @default(autoincrement()) @map("number_participation")
+    numberParticipation Int      @unique @default(autoincrement()) @map("number_participation")
     createdAt           DateTime @default(now()) @map("created_at")
 
-    event    Event  @relation(fields: [event_id], references: [id])
+    event    Event    @relation(fields: [event_id], references: [id], onDelete: Cascade)
     event_id String
+    checkIn  CheckIn?
 
     @@unique([event_id, email])
     @@map("attendee")
+}
+
+model CheckIn {
+    id        Int      @id @default(autoincrement())
+    createdAt DateTime @default(now()) @map("created_at")
+
+    attendee   Attendee @relation(fields: [attendeeId], references: [numberParticipation], onDelete: Cascade)
+    attendeeId Int      @unique @map("attendee_id")
+
+    @@map("check_ins")
 }

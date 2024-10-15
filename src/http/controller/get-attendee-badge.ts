@@ -1,6 +1,5 @@
 import { FastifyReply, FastifyRequest } from 'fastify'
 import { z } from 'zod'
-import { prisma } from '../../lib/prisma'
 import { RegisterAttendeeForEventRepository } from '../../repositories/prisma/prisma-register-attendee-for-event-repository'
 
 export async function getAttendeeBadge(
@@ -18,5 +17,16 @@ export async function getAttendeeBadge(
 
     const attendee = await prismaRegisterAttendeeForEvent.findById(attendeeId)
 
-    return reply.status(200).send({ attendee })
+    const baseURL = `${request.protocol}://${request.hostname}`
+
+    const checkInURL = new URL(`/attendees/${attendeeId}/check-in`, baseURL)
+
+    return reply.status(200).send({
+        badge: {
+            name: attendee?.name,
+            email: attendee?.email,
+            eventTitle: attendee?.event.title,
+            checkInURL: checkInURL.toString(),
+        },
+    })
 }
